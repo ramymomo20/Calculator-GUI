@@ -200,7 +200,7 @@ class Calculator:
             return str(round(y,4)) # After the calculations are calculated, pop the final value from the stack and return it.
 
 def factorial_parser(txt):
-    x = re.split("([+-/*!])", txt.replace(" ", ""))
+    x = re.split("([()+-/*!])", txt.replace(" ", ""))
 
     indices = [i for i in range(len(x)) if x[i] == '!']
     lof = [i-1 for i in indices]
