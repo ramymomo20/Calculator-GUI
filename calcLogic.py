@@ -1,3 +1,6 @@
+import math, re
+from functools import reduce
+
 class Node:
     def __init__(self, value):
         self.value = value  
@@ -168,7 +171,7 @@ class Calculator:
         if postfix != None: # Validates postfix expression.
             for operator in postfix.split(): # Iterate through the expression.
                 if not self._isNumber(operator): 
-                    (second_number, first_number) = (calcStack.pop(), calcStack.pop()) # Set the first number and second number equal to the calcStack.pop().
+                    (second_number, first_number) = (calcStack.pop(), calcStack.pop()) # Set the first number and second number equal to the calcStack.pop().                    
                     if operator == '^': # Exponents
                         calcStack.push(float(first_number) ** float(second_number))
 
@@ -195,3 +198,17 @@ class Calculator:
             return int(y)
         else:
             return str(round(y,4)) # After the calculations are calculated, pop the final value from the stack and return it.
+
+def factorial_parser(txt):
+    x = re.split("([+-/*!])", txt.replace(" ", ""))
+
+    indices = [i for i in range(len(x)) if x[i] == '!']
+    lof = [i-1 for i in indices]
+    values = [int(x[i]) for i in lof]
+    fact_values = [str(math.factorial(i)) for i in values]
+
+    str_values = map(str,values)
+    ja = [i + ' !' for i in str_values]
+    myDict = dict(zip(ja, fact_values)) 
+    
+    return reduce(lambda a, kv: a.replace(*kv), myDict.items(), txt)

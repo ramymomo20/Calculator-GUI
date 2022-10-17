@@ -16,10 +16,16 @@ output.grid(pady=5,row=1,sticky="w",padx=42)
 
 # <====================  Button Operation code starts here.. ==============>
 def calc_expression(expression):
-    x = Calculator()
-    x.setExpr(expression)
-    res = x.calculate
-    return str(res)
+    if '!' in expression:
+        x = Calculator()
+        x.setExpr(factorial_parser(expression))
+        res = x.calculate
+        return str(res)
+    else:
+        x = Calculator()
+        x.setExpr(expression)
+        res = x.calculate
+        return str(res)
 
 def result():
         try:
@@ -49,33 +55,7 @@ def result():
             output.insert("end","invalid input")
             output.config(state='readonly')
 # <============ end code ================>
-class Other:
-    def factorial():
-        try:
-            if input.get() == "":
-                output.config(state=NORMAL)
-                output.delete(0,"end")
-                output.insert("end","")
-                output.config(state='readonly')
-            else:
-                inp = input.get()
-                inp = int(inp)
-                for i in range (1,inp):
-                    inp *= i
-
-                output.config(state=NORMAL)
-                input.delete(0,"end")
-                output.delete(0,"end")
-                output.insert("end",str(inp))
-                output.config(state='readonly')
-
-        except SyntaxError:
-            input.delete(0,"end")
-            output.config(state=NORMAL)
-            output.delete(0,"end")
-            output.insert("end","invalid input")
-            output.config(state='readonly')  
-
+class Other: 
     def sinF():
         try:
             if input.get() == "":
@@ -161,7 +141,8 @@ class Other:
             output.config(state=NORMAL)
             output.delete(0,"end")
             output.insert("end","invalid input")
-            output.config(state='readonly') 
+            output.config(state='readonly')
+            
 # <============= Button Design Code starts here.. ==================>
 clear = Button(main, text="⌫",width=5,command=lambda:input.delete(len(input.get())-1,"end"),bg="blue",fg="white",relief=RIDGE)
 clear.grid(row=0,sticky="e",padx=155,pady=5)
@@ -194,7 +175,7 @@ plus.grid(row=2,sticky="e",padx=155,pady=5)
 
 
 #####################
-fact = Button(text="x!",width=2,command=Other.factorial,borderwidth=3,relief=RIDGE)
+fact = Button(text="x!",width=2,command=lambda:input.insert("end"," ! "),borderwidth=3,relief=RIDGE)
 fact.grid(row=2,sticky="e",padx=125,pady=5)
 #####################
 
