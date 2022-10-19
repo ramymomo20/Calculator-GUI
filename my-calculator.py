@@ -16,19 +16,13 @@ output.grid(pady=5,row=1,sticky="w",padx=42)
 
 # <====================  Button Operation code starts here.. ==============>
 def calc_expression(expression):
-    if '!' in expression:
-        x = Calculator()
-        x.setExpr(factorial_parser(expression))
-        res = x.calculate
-        return str(res)
-    else:
-        x = Calculator()
-        x.setExpr(expression)
-        res = x.calculate
-        return str(res)
+    x = Calculator()
+    x.setExpr(factorial_parser(expression))
+    res = x.calculate
+    return str(res)
 
 def result():
-        try:
+        
             if input.get() == "":
                 output.config(state=NORMAL)
                 output.delete(0,"end")
@@ -46,14 +40,16 @@ def result():
                 output.config(state=NORMAL)
                 input.delete(0,"end")
                 output.delete(0,"end")
-                output.insert("end",calc_expression(res))
-                output.config(state='readonly')
-        except SyntaxError:
-            input.delete(0,"end")
-            output.config(state=NORMAL)
-            output.delete(0,"end")
-            output.insert("end","invalid input")
-            output.config(state='readonly')
+                try:
+                    output.insert("end",calc_expression(res))
+                    output.config(state='readonly')
+                except:
+                    input.delete(0,"end")
+                    output.config(state=NORMAL)
+                    output.delete(0,"end")
+                    output.insert("end","invalid input")
+                    output.config(state='readonly')
+            
 # <============ end code ================>
 class Other: 
     def sinF():
@@ -67,10 +63,7 @@ class Other:
                 inp = input.get()
                 ans = math.sin(int(inp))
 
-                if ans - int(ans) == 0:
-                    ans = int(ans)
-                else:
-                    ans = str(round(ans,4))
+                ans = int(ans) if ans - int(ans) == 0 else str(round(ans,4))
 
                 output.config(state=NORMAL)
                 input.delete(0,"end")
@@ -78,7 +71,7 @@ class Other:
                 output.insert("end",str(ans))
                 output.config(state='readonly')
 
-        except SyntaxError:
+        except:
             input.delete(0,"end")
             output.config(state=NORMAL)
             output.delete(0,"end")
@@ -96,10 +89,7 @@ class Other:
                 inp = input.get()
                 ans = math.cos(int(inp))
 
-                if ans - int(ans) == 0:
-                    ans = int(ans)
-                else:
-                    ans = str(round(ans,4))
+                ans = int(ans) if ans - int(ans) == 0 else str(round(ans,4))
 
                 output.config(state=NORMAL)
                 input.delete(0,"end")
@@ -107,7 +97,7 @@ class Other:
                 output.insert("end",str(ans))
                 output.config(state='readonly')
 
-        except SyntaxError:
+        except:
             input.delete(0,"end")
             output.config(state=NORMAL)
             output.delete(0,"end")
@@ -125,10 +115,7 @@ class Other:
                 inp = input.get()
                 ans = math.tan(int(inp))
 
-                if ans - int(ans) == 0:
-                    ans = int(ans)
-                else:
-                    ans = str(round(ans,4))
+                ans = int(ans) if ans - int(ans) == 0 else str(round(ans,4))
 
                 output.config(state=NORMAL)
                 input.delete(0,"end")
@@ -136,7 +123,7 @@ class Other:
                 output.insert("end",str(ans))
                 output.config(state='readonly')
 
-        except SyntaxError:
+        except:
             input.delete(0,"end")
             output.config(state=NORMAL)
             output.delete(0,"end")

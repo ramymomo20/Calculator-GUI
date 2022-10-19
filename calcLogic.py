@@ -1,6 +1,7 @@
 import math, re
 from functools import reduce
 
+#*-------------------------------------------------------------------------------------------------
 class Node:
     def __init__(self, value):
         self.value = value  
@@ -11,6 +12,7 @@ class Node:
 
     __repr__ = __str__
 
+#*-------------------------------------------------------------------------------------------------
 class Stack:
     def __init__(self):
         self.top = None
@@ -60,6 +62,7 @@ class Stack:
         else:
             return None
 
+#*-------------------------------------------------------------------------------------------------
 class Calculator:
     def __init__(self):
         self.__expr = None
@@ -182,7 +185,7 @@ class Calculator:
                         if second_number != 0: # Validate any divide by 0 case.
                             calcStack.push(float(first_number) / float(second_number))
                         else:
-                            return None
+                            return 'Error'
                     if operator == '+': # Addition
                         calcStack.push(float(first_number) + float(second_number)) # Doesn't matter the order of addition, due to the commutative property.
 
@@ -194,21 +197,16 @@ class Calculator:
             return None
         
         y = calcStack.pop()
-        if y - int(y) == 0:
-            return int(y)
-        else:
-            return str(round(y,4)) # After the calculations are calculated, pop the final value from the stack and return it.
 
+        return int(y) if y - int(y) == 0 else str(round(y,4)) # After the calculations are calculated, pop the final value from the stack and return it.
+
+#*-------------------------------------------------------------------------------------------------
 def factorial_parser(txt):
     x = re.split("([()+-/*!])", txt.replace(" ", ""))
 
-    indices = [i for i in range(len(x)) if x[i] == '!']
-    lof = [i-1 for i in indices]
-    values = [int(x[i]) for i in lof]
-    fact_values = [str(math.factorial(i)) for i in values]
+    values = [x[i-1] for i in [i for i in range(len(x)) if x[i] == '!']] # Gives you the number that is due for the factorial by finding each index '!' appears.
+    fact_values = [str(math.factorial(i)) for i in map(int, values)] # Calculates the factorial for each number.
 
-    str_values = map(str,values)
-    ja = [i + ' !' for i in str_values]
-    myDict = dict(zip(ja, fact_values)) 
+    myDict = dict(zip([i + ' !' for i in values], fact_values)) # Compares the original string representation with its factorial value.
     
-    return reduce(lambda a, kv: a.replace(*kv), myDict.items(), txt)
+    return reduce(lambda a, kv: a.replace(*kv), myDict.items(), txt) # Replaces all factorial instances in string with its factorial in-place.
