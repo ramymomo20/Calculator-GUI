@@ -21,6 +21,19 @@ def calc_expression(expression):
     res = x.calculate
     return str(res)
 
+def clear():
+    length = len(input.get())
+    try:
+        if len(input.get()) <= 1 and input.get()[-1] == '':
+            input.delete(0, 'end')
+    except IndexError:
+        input.insert("end",'')
+        
+    if len(input.get()) > 1 and input.get()[-1] == ' ':
+        input.delete(length-2,'end')
+    else:
+        input.delete(length-1,'end')
+        
 def result():
         
             if input.get() == "":
@@ -131,7 +144,7 @@ class Other:
             output.config(state='readonly')
             
 # <============= Button Design Code starts here.. ==================>
-clear = Button(main, text="⌫",width=5,command=lambda:input.delete(len(input.get())-1,"end"),bg="blue",fg="white",relief=RIDGE)
+clear = Button(main, text="⌫",width=5,command=clear,bg="blue",fg="white",borderwidth=1,relief=RIDGE)
 clear.grid(row=0,sticky="e",padx=155,pady=5)
 
 
