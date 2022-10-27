@@ -161,10 +161,10 @@ result.grid(row=1,sticky="w",padx=130)
 leftParenth = Button(text="(",width=2,command=lambda:input.insert("end"," ( "),borderwidth=3,relief=RIDGE)
 leftParenth.grid(row=2,sticky="w",padx=15,pady=5)
 
-rightParenth = Button(text=")",width=2,command=lambda:input.insert("end"," ) "),borderwidth=3,relief=RIDGE)
+rightParenth = Button(text=")",width=2,command=lambda:input.insert("end"," )"),borderwidth=3,relief=RIDGE)
 rightParenth.grid(row=2,sticky="w",padx=45,pady=5)
 
-sqrt = Button(text="√x",width=2,command=lambda:input.insert("end"," ^ ( 1 / 2 ) "),borderwidth=3,relief=RIDGE)
+sqrt = Button(text="√x",width=2,command=lambda:input.insert("end"," ^ ( 1 / 2 )"),borderwidth=3,relief=RIDGE)
 sqrt.grid(row=2,sticky="w",padx=75,pady=5)
 
 square = Button(text="^",width=2,command=lambda:input.insert("end"," ^ "),borderwidth=3,relief=RIDGE)
