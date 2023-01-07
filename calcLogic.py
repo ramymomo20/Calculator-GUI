@@ -1,141 +1,152 @@
 import functools
 
 #*-------------------------------------------------------------------------------------------------
-class Node:
-    def __init__(self, value):
-        self.value = value  
-        self.next = None 
-
-#*-------------------------------------------------------------------------------------------------
 class Stack:
     def __init__(self):
-        self.top = None
+        self.items = []
 
     def isEmpty(self):
-        return self.top is None
+        return not self.items
 
     def __len__(self):
-        count = 0
-        current = self.top
+        return len(self.items)
 
-        while current is not None: 
-            current = current.next 
-            count += 1
-        return count
-
-    def push(self,value): 
-        node = Node(value)
-        node.next = self.top
-        self.top = node
+    def push(self, value):
+        self.items.append(value)
 
     def pop(self):
-        if not self.isEmpty():
-            temp = self.top.value
-            self.top = self.top.next
-            return temp
-        else:
-            return None
+        return None if self.isEmpty() else self.items.pop()
 
     def peek(self):
-        return self.top.value if not self.isEmpty() else None
-
+        return None if self.isEmpty() else self.items[-1]
 #*-------------------------------------------------------------------------------------------------
+
 class Calculator:
-    def __init__(self):
-        self.__expr = None
+    def __init__(self, expr=None):
+        self.expr = expr
+        self.operators = {
+            "+": lambda x,y : x + y,
+            "-": lambda x,y : x - y,
+            "*": lambda x,y : x * y,
+            "/": lambda x,y : x / y,
+            "^": lambda x,y : x ** y,
+            "√": lambda x: x ** 0.5,
+            "!": self.factorial
+        }
 
-    @property
-    def getExpr(self):
-        return self.__expr
+    def precedence(self, operator):
+        operator_list = ['+', '-', '*', '/', '^', '!', '√']
+        return 1 if operator in operator_list[:1] else 2 if operator in operator_list[2:4] else 3 if operator == operator_list[4] else 4 if operator == operator_list[5] else 5 if operator == operator_list[6] else 0
 
-    def setExpr(self, new_expr):
-        if isinstance(new_expr, str):
-            self.__expr = new_expr
-        else:
-            print('setExpr error: Invalid expression')
-            return None
+    def isBalanced(self, expr):
+        equation = Stack()
+        i = 0
+        while i < len(expr):
+            if expr[i] == '(':
+                equation.push(expr[i])
+            elif expr[i] == ')':
+                if not equation.isEmpty():
+                    equation.pop()
+                else:
+                    return False
+            i += 1
+        return equation.isEmpty()
 
-    def _isNumber(self, txt):
+    def _isNumber(self, expr):
         try:
-            float(txt)
+            float(expr)
             return True
         except ValueError:
             return False
 
-    def _getPostfix(self, txt):
-        stack = []
-        operators = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "!": 4, "(": 0}
-        postfix = []
-
+    def addSpaces(self, expr):
+        expr = expr.replace(" ", "")
+        import re
+        split_expression = re.findall(r'\s*[\d.]+\s*|\s*\D\s*', expr)
         i = 0
-        while i < len(txt):
-            if txt[i].isspace():
-                i += 1
-            elif txt[i].isdigit():
-                start = i
-                while i < len(txt) and txt[i].isdigit():
-                    i += 1
-                postfix.append(txt[start:i])
-            elif txt[i] in operators:
-                token = txt[i]
-                if token == "!" and (i == 0 or txt[i-1] == " "):
-                    postfix.append(token)
+        
+        while i < len(split_expression):
+            # If the current token is '-' and the previous token is not a digit, combine the '-' with the next token
+            if split_expression[i] == '-' and (i == 0 or not split_expression[i-1].isdigit()):
+                split_expression[i] += split_expression[i+1]
+                del split_expression[i+1]
+            if split_expression[i] == '√':
+                if i - 1 >= 0:
+                    if split_expression[i-1].isdigit():
+                        return "Error"
+                # Check if the expression is of the form "√number"
+                if i == 0 or not split_expression[i-1].isdigit():
+                    if i+1 < len(split_expression) and split_expression[i+1].isdigit():
+                        i += 1
+                    else:
+                        return "Error"
+                # Check if the expression is of the form "number√"
+                if len(split_expression) < 3 and (split_expression[i-1].isdigit()):
+                    return "Error"
                 else:
-                    while stack and operators[token] <= operators[stack[-1]]:
-                        postfix.append(stack.pop())
-                    stack.append(token)
-                i += 1
-            elif txt[i] == "(":
-                stack.append(txt[i])
-                i += 1
-            elif txt[i] == ")":
-                while stack[-1] != "(":
-                    postfix.append(stack.pop())
-                stack.pop()
-                i += 1
+                    i += 1
             else:
-                raise ValueError(f"Invalid token: {txt[i]}")
+                i += 1
+        x = ' '.join(split_expression)
+        return x
 
-        while stack:
-            postfix.append(stack.pop())
-
-        return " ".join(postfix)
+    def _getPostfix(self, expr):
+        expr = self.addSpaces(expr)
+        equation = Stack()
+        output = []
+        
+        for item in expr.split():
+            if self._isNumber(item):
+                output.append(item)              
+            elif item == '(':
+                equation.push(item)
+            elif item == ')':
+                while equation and equation.peek() != '(':
+                    output.append(equation.pop())
+                equation.pop()
+            elif item == '!':
+                output.append(item)
+            else:
+                while not equation.isEmpty() and equation.peek() != '(' and self.precedence(item) <= self.precedence(equation.peek()):
+                    output.append(equation.pop())
+                equation.push(item)
+        while not equation.isEmpty():
+            output.append(equation.pop())
+            
+        return ' '.join(output)
 
     @property
     def calculate(self):
-        @functools.lru_cache(maxsize=None)
-        def factorial(x):
-            if x == 0:
-                return 1
-            else:
-                return x * factorial(x-1)
-
+        if not isinstance(self.expr,str) or len(self.expr) <= 0:
+            print("Argument error in calculate")
+            return None
+        
         stack = Stack()
-
-        operators = {
-            "+": lambda x, y: x + y,
-            "-": lambda x, y: x - y,
-            "*": lambda x, y: x * y,
-            "/": lambda x, y: x / y,
-            "^": lambda x, y: x ** y,
-            "!": factorial
-        }
-        postfix = self._getPostfix(self.__expr)
-
-        for token in postfix.split():
-            if token.isdigit():
-                stack.push(float(token))
-
-            elif token == "!":
-                x = stack.pop()
-                stack.push(operators[token](x))
-
-            elif token in operators:
-                y = stack.pop()
-                x = stack.pop()
-                stack.push(operators[token](x, y))
+        
+        for item in self._getPostfix(self.expr).split():
+            if self._isNumber(item):
+                stack.push(float(item))
             else:
-                return None
-
+                if item == '!':
+                    x = stack.pop()
+                    stack.push(self.factorial(x))
+                elif item == '√':
+                    x = stack.pop()
+                    stack.push(self.operators[item](x))
+                else:
+                    operand1 = stack.pop()
+                    operand2 = stack.pop()
+                    if operand1 is not None:
+                        if item == "/":
+                            if operand2 == 0:
+                                return "Zero Division Error"
+                    stack.push(self.operators[item](operand2, operand1))
+                    
         ans = stack.pop()
         return int(ans) if ans - int(ans) == 0 else str(round(ans,4))
+    
+    @functools.lru_cache(maxsize=None)
+    def factorial(self, operand):
+        if operand == 1:
+            return 1
+        return operand * self.factorial(operand - 1)

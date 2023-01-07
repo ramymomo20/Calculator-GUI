@@ -17,8 +17,7 @@ output.grid(pady=5,row=1,sticky="w",padx=42)
 
 # <====================  Button Operation code starts here.. ==============>
 def calc_expression(expression):
-    x = Calculator()
-    x.setExpr(expression)
+    x = Calculator(f'{expression}')
     res = x.calculate
     return str(res)
 
@@ -36,33 +35,31 @@ def clear():
         input.delete(length-1,'end')
 
 def result():
-        
-            if input.get() == "":
-                output.config(state=NORMAL)
-                output.delete(0,"end")
-                output.insert("end","")
-                output.config(state='readonly')
-            elif input.get()[0] == "0":
-                input.delete(0,"end")
-                output.config(state=NORMAL)
-                output.delete(0,"end")
-                output.insert("end","0")
-                output.config(state='readonly')
-            else:
-                res = input.get()
-                res = str(res)
-                output.config(state=NORMAL)
-                input.delete(0,"end")
-                output.delete(0,"end")
-                try:
-                    output.insert("end",calc_expression(res))
-                    output.config(state='readonly')
-                except:
-                    input.delete(0,"end")
-                    output.config(state=NORMAL)
-                    output.delete(0,"end")
-                    output.insert("end","invalid input")
-                    output.config(state='readonly')
+    if input.get() == "":
+        output.config(state=NORMAL)
+        output.delete(0,"end")
+        output.insert("end","")
+        output.config(state='readonly')            
+    elif input.get()[0] == "0":
+        input.delete(0,"end")
+        output.config(state=NORMAL)
+        output.delete(0,"end")
+        output.insert("end","0")
+        output.config(state='readonly')
+    else:
+        res = input.get()
+        output.config(state=NORMAL)
+        input.delete(0,"end")
+        output.delete(0,"end")
+        try:
+            output.insert("end",calc_expression(str(res)))
+            output.config(state='readonly')
+        except:
+            input.delete(0,"end")
+            output.config(state=NORMAL)
+            output.delete(0,"end")
+            output.insert("end","invalid input")
+            output.config(state='readonly')
             
 # <============ end code ================>
 class Other: 
@@ -159,16 +156,16 @@ result.grid(row=1,sticky="w",padx=130)
 
 
 
-leftParenth = Button(text="(",width=2,command=lambda:input.insert("end"," ( "),borderwidth=1,relief=RIDGE)
+leftParenth = Button(text="(",width=2,command=lambda:input.insert("end","("),borderwidth=1,relief=RIDGE)
 leftParenth.grid(row=2,sticky="w",padx=15,pady=5)
 
-rightParenth = Button(text=")",width=2,command=lambda:input.insert("end"," ) "),borderwidth=1,relief=RIDGE)
+rightParenth = Button(text=")",width=2,command=lambda:input.insert("end",")"),borderwidth=1,relief=RIDGE)
 rightParenth.grid(row=2,sticky="w",padx=45,pady=5)
 
-sqrt = Button(text="√x",width=2,command=lambda:input.insert("end"," ^ ( 1 / 2 ) "),borderwidth=1,relief=RIDGE)
+sqrt = Button(text="√x",width=2,command=lambda:input.insert("end","√"),borderwidth=1,relief=RIDGE)
 sqrt.grid(row=2,sticky="w",padx=75,pady=5)
 
-square = Button(text="^",width=2,command=lambda:input.insert("end"," ^ "),borderwidth=1,relief=RIDGE)
+square = Button(text="^",width=2,command=lambda:input.insert("end","^ "),borderwidth=1,relief=RIDGE)
 square.grid(row=2,sticky="w",padx=105,pady=5)
 
 plus = Button(main,text="+",width=2,command=lambda:input.insert("end"," + "),borderwidth=1,relief=RIDGE)
@@ -176,7 +173,7 @@ plus.grid(row=2,sticky="e",padx=155,pady=5)
 
 
 #####################
-fact = Button(text="x!",width=2,command=lambda:input.insert("end"," ! "),borderwidth=1,relief=RIDGE)
+fact = Button(text="x!",width=2,command=lambda:input.insert("end","!"),borderwidth=1,relief=RIDGE)
 fact.grid(row=2,sticky="e",padx=125,pady=5)
 #####################
 
